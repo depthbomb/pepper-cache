@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pepper-cache"
+version = "1.0.0"
+description = "A simple, persistent key/value cache with no dependencies."
+readme = "README.md"
+authors = [{ name = "depthbomb" }]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities"
+]
+keywords = ["cache"]
+requires-python = ">=3.10"
+
+[project.urls]
+Homepage = "https://github.com/depthbomb/pepper-cache"
