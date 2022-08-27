@@ -1,6 +1,6 @@
 # pepper-cache
 
-![PyPI](https://img.shields.io/pypi/v/pepper-cache?color=0073b7&label=version&logo=python&logoColor=white&style=flat-square) ![PyPI - Downloads](https://img.shields.io/pypi/dd/pepper-cache?color=0073b7&logo=python&logoColor=white&style=flat-square)
+[![PyPI](https://img.shields.io/pypi/v/pepper-cache?color=0073b7&label=version&logo=python&logoColor=white&style=flat-square) ![PyPI - Downloads](https://img.shields.io/pypi/dd/pepper-cache?color=0073b7&logo=python&logoColor=white&style=flat-square)](https://pypi.org/project/pepper-cache/)
 
 A simple, persistent key/value cache with no dependencies.
 

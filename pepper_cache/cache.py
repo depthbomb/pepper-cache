@@ -3,6 +3,7 @@ from os import makedirs
 from time import time_ns
 from pathlib import Path
 from hashlib import sha1
+from threading import Lock
 from logging import getLogger
 from typing import Any, Literal, Optional
 
@@ -10,11 +11,13 @@ logger = getLogger("pepper-cache")
 
 
 class Cache:
+    _lock: Lock
     _store: dict[str, tuple[str, Any, int]]
     _store_path: Path
-    _serializer: str
+    _serializer: Literal["pickle", "json"]
 
     def __init__(self, cache_path: str, *, serializer: Literal["pickle", "json"] = "pickle"):
+        self._lock = Lock()
         self._store = {}
         self._store_path = Path.home().joinpath(".cache", cache_path)
         self._store_path.mkdir(parents=True) if not self._store_path.exists() else None
@@ -42,16 +45,16 @@ class Cache:
         :param default: The default value to return if the value is not stored
         """
         if key in self._store:
-            logger.debug("\"%s\" found in store" % key)
+            logger.debug("'%s' found in store" % key)
             (key, value, expires) = self._store[key]
             if self.__object_has_expired(expires):
                 self.__delete_file_object(key)
-                logger.debug("Deleted expired file object for \"%s\"" % key)
+                logger.debug("Deleted expired file object for '%s'" % key)
                 return default
 
             return value
 
-        logger.debug("\"%s\" not found in store" % key)
+        logger.debug("'%s' not found in store" % key)
 
         return default
 
@@ -80,7 +83,7 @@ class Cache:
     @staticmethod
     def _clean_filename(filename: str) -> str:
         # Based on https://github.com/django/django/blob/main/django/utils/text.py
-        s = str(filename).strip().replace(" ", "_")
+        s = filename.strip().replace(" ", "_")
         s = re.sub(r"(?u)[^-\w.]", "", s)
         if s in {"", ".", ".."}:
             raise Exception("Could not derive file name from '%s'" % filename)
@@ -106,7 +109,7 @@ class Cache:
                 if self.__object_has_expired(expires):
                     object_expired = True
                 else:
-                    logger.debug("Loaded file object for \"%s\"" % key)
+                    logger.debug("Loaded file object for '%s'" % key)
                     self._store[key] = data
 
             if object_expired:
@@ -116,7 +119,7 @@ class Cache:
         objects = list(self._store_path.glob("**/*"))
         for obj in objects:
             if obj.is_file():
-                logger.debug("Loading file object \"%s\"" % obj)
+                logger.debug("Loading file object '%s'" % obj)
                 self.__load_object_from_file(obj)
 
     def __write_file_object(self, key: str, value: tuple[str, Any, int]) -> None:
@@ -126,7 +129,7 @@ class Cache:
         makedirs(filedir) if not filedir.exists() else None
 
         mode = "wb" if self._serializer == "pickle" else "w"
-        with filepath.open(mode) as file:
+        with self._lock, filepath.open(mode) as file:
             if self._serializer == "pickle":
                 from pickle import dumps
             else:
@@ -134,13 +137,14 @@ class Cache:
 
             data = dumps(value)
             file.write(data)
-            logger.debug("Wrote data to file object \"%s\"" % filepath)
+            logger.debug("Wrote data to file object '%s'" % filepath)
 
     def __delete_file_object(self, key: str) -> None:
         filepath = self.__get_file_object_path(key)
         if filepath.exists():
-            filepath.unlink()
-            logger.debug("Deleted file object \"%s\"" % filepath)
+            with self._lock:
+                filepath.unlink()
+                logger.debug("Deleted file object '%s'" % filepath)
 
     def __object_has_expired(self, expires: int) -> bool:
         return expires != 0 and self._unix_time() >= expires
