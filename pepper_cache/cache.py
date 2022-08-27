@@ -10,7 +10,6 @@ logger = getLogger("pepper-cache")
 
 
 class Cache:
-    _name: str
     _store: dict[str, tuple[str, Any, int]]
     _store_path: Path
     _serializer: str
