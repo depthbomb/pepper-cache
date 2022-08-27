@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pepper-cache"
-version = "1.1.0"
+version = "1.2.0"
 description = "A simple, persistent key/value cache with no dependencies."
 readme = "README.md"
 authors = [{ name = "depthbomb" }]
@@ -24,4 +24,6 @@ keywords = ["cache"]
 requires-python = ">=3.10"
 
 [project.urls]
-Homepage = "https://github.com/depthbomb/pepper-cache"
+Repository = "https://github.com/depthbomb/pepper-cache"
+Issues = "https://github.com/depthbomb/pepper-cache/issues"
+Changelog = "https://github.com/depthbomb/pepper-cache/blob/master/CHANGELOG.md"
