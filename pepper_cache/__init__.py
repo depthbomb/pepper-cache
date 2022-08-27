@@ -1,19 +1,21 @@
 from .cache import Cache
+from pathlib import Path
 from typing import Literal, Optional
 
 _CACHES: dict[str, Cache] = {}
 
 
-def create_cache(name: str, path: str, *, serializer: Literal["pickle", "json"] = "pickle") -> Cache:
+def create_cache(name: str, *, path: Optional[str | Path] = None, serializer: Literal["pickle", "json"] = "pickle") -> Cache:
     """
     Creates a Cache instance.
 
-    :param name: The name of the cache instance
-    :param path: The directory in which to store cache files relative to <HOME>/.cache
-    :param serializer: The serializer to use when writing values to the disk, defaults to using pickle
+    :param name: The name of the cache instance, also used for the directory relative to $HOME/.cache if no path is supplied
+    :param path: The directory in which to store cache files relative to $HOME/.cache
+    :param serializer: The serializer to use when writing values to the disk, defaults to "pickle"
     """
     if name not in _CACHES:
-        cache_instance = Cache(path, serializer=serializer)
+        cache_path = Cache.clean_filename(name) if not path else path
+        cache_instance = Cache(cache_path, serializer=serializer)
         _CACHES[name] = cache_instance
         return cache_instance
 

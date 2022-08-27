@@ -13,11 +13,12 @@ $ pip install pepper-cache
 ## API
 
 - `create_cache` - Creates a Cache instance.
-  - `name: str` - The name of the cache instance
-  - `path: str` - The directory in which to store cache files relative to `<HOME>/.cache`
-  - `serializer: "pickle"|"json" = "pickle"` - The serializer to use when writing values to the disk, defaults to "pickle"
+  - `name: str|Path` - The name of the cache instance, also used for the directory relative to `$HOME/.cache` if no `path` is supplied
+  - `path: str = None` - The directory in which to store cache files relative to `$HOME/.cache`
+  - `serializer: "pickle"|"json" = "pickle"` - The serializer to use when writing values to the disk, defaults to `"pickle"`
 ```python
-my_cache = create_cache("my cache", "my_app/my_cache", serializer="json")
+my_cache = create_cache("my cache", path="my_app/my_cache", serializer="json")
+my_cache = create_cache("my cache")  # path arg omitted, path would be $HOME/.cache/my_cache
 ```
 
 ---
@@ -26,7 +27,7 @@ my_cache = create_cache("my cache", "my_app/my_cache", serializer="json")
   - `name: str` - The name of the cache instance to retrieve
 ```python
 my_cache = get_cache("my cache")
-my_cache2 = get_cache("my cache 2")  # raises a KeyError
+my_cache = get_cache("nonexistent cache")  # None
 ```
 
 ---
@@ -47,7 +48,7 @@ cache.set("my key", my_value, ttl=1000)  # stored for one second
   - `default: Any` - The default value to return if the value is not stored
 ```python
 my_value = cache.get("my key 2")  # returns None if the value is not stored or has expired. Consider checking if the item exists below
-my_value2 = cache.get("my key 2", default="now has a value")
+my_value = cache.get("my key 2", default="now has a value")
 ```
 
 ---

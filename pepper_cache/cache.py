@@ -16,7 +16,7 @@ class Cache:
     _store_path: Path
     _serializer: Literal["pickle", "json"]
 
-    def __init__(self, cache_path: str, *, serializer: Literal["pickle", "json"] = "pickle"):
+    def __init__(self, cache_path: str | Path, *, serializer: Literal["pickle", "json"] = "pickle"):
         self._lock = Lock()
         self._store = {}
         self._store_path = Path.home().joinpath(".cache", cache_path)
@@ -77,18 +77,23 @@ class Cache:
             self.__delete_file_object(key)
 
     @staticmethod
-    def _unix_time() -> int:
-        return time_ns() // 1_000_000
+    def clean_filename(filename: str) -> Path:
+        """
+        Cleans a string to allow for usage in paths
 
-    @staticmethod
-    def _clean_filename(filename: str) -> str:
-        # Based on https://github.com/django/django/blob/main/django/utils/text.py
+        :param filename: The file name string to clean
+        """
+        # Based on https://github.com/django/django/blob/main/django/utils/text.
         s = filename.strip().replace(" ", "_")
         s = re.sub(r"(?u)[^-\w.]", "", s)
         if s in {"", ".", ".."}:
             raise Exception("Could not derive file name from '%s'" % filename)
 
-        return s
+        return Path(s)
+
+    @staticmethod
+    def _unix_time() -> int:
+        return time_ns() // 1_000_000
 
     def __get_file_object_path(self, key: str) -> Path:
         filename = sha1(key.encode("utf-8")).hexdigest()
@@ -104,6 +109,7 @@ class Cache:
                     from pickle import load
                 else:
                     from json import load
+
                 data = load(file)
                 (key, _, expires) = data
                 if self.__object_has_expired(expires):
@@ -116,8 +122,7 @@ class Cache:
                 self.__delete_file_object(key)
 
     def __load_objects_from_files(self) -> None:
-        objects = list(self._store_path.glob("**/*"))
-        for obj in objects:
+        for obj in self._store_path.glob("**/*"):
             if obj.is_file():
                 logger.debug("Loading file object '%s'" % obj)
                 self.__load_object_from_file(obj)
