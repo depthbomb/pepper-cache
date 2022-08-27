@@ -67,3 +67,7 @@ if not cache.has("my key 2"):
 cache.delete("my key 2"):
 cache.get("my key 2")  # None
 ```
+
+---
+
+"pepper" comes from the code name of a project of mine and instead of writing packages like this specifically for the project, I decided to instead make them full on Python packages that anyone can use.
