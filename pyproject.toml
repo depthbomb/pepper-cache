@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pepper-cache"
-version = "1.2.0"
+version = "1.3.0"
 description = "A simple, persistent key/value cache with no dependencies."
 readme = "README.md"
 authors = [{ name = "depthbomb" }]
@@ -15,6 +15,7 @@ classifiers = [
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",

@@ -1,6 +1,7 @@
-from .cache import Cache
 from pathlib import Path
 from typing import Literal, Optional
+
+from .cache import Cache
 
 _CACHES: dict[str, Cache] = {}
 
@@ -22,10 +23,11 @@ def create_cache(name: str, *, path: Optional[str | Path] = None, serializer: Li
     raise Exception(f"Cache instance \"{name}\" has already been created")
 
 
-def get_cache(name: str) -> Optional[Cache]:
+def get_cache(name: str, *, create: bool = False) -> Optional[Cache]:
     """
     Retrieves a Cache instance if it exists.
 
     :param name: The name of the cache instance to retrieve
+    :param create: Whether to create the cache if it does not exist
     """
-    return _CACHES[name] if name in _CACHES else None
+    return _CACHES[name] if name in _CACHES else create_cache(name) if create else None
