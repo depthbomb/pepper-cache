@@ -25,9 +25,11 @@ my_cache = create_cache("my cache")  # path arg omitted, path would be $HOME/.ca
 
 - `get_cache` - Retrieves a Cache instance.
   - `name: str` - The name of the cache instance to retrieve
+  - `create: bool` - Whether to create the cache if it does not exist
 ```python
 my_cache = get_cache("my cache")
 my_cache = get_cache("nonexistent cache")  # None
+my_cache = get_cache("nonexistent cache", create=True)  # Now exists!
 ```
 
 ---
